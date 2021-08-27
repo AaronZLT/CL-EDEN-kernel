@@ -1,0 +1,100 @@
+# enn output lists
+
+########## File lists to cp/rm/download
+
+enn_lib_list_system=(
+)
+
+enn_lib_list_vendor=(
+  "vendor.samsung_slsi.hardware.enn@1.0.so"
+  "libenn_common_utils.so"
+  "libeden_for_enn.so"
+  "libeden_rt_stub.samsung_slsi.so"
+  "libenn_user.samsung_slsi.so"
+  "libenn_user_lib.so"
+  "libenn_model.so"
+  "libenn_profiler.so"
+  "libenn_user_driver_gpu.so"
+  "libenn_user_driver_cpu.so"
+  "libenn_user_driver_unified.so"
+  "libenn_fw_graph_parser.so"
+  "libenn_preset_config.so"
+  "libenn_jsoncpp.so"
+  "libenn_public_api_cpp.so"
+  "libenn_public_api_cpp_lib.so"
+  "libenn_engine.so"
+  "libenn_engine_lib.so"
+)
+
+enn_bin_list_system=(
+)
+
+enn_bin_list_vendor=(
+  "enn_cpu_op_test"
+  "enn_gpu_op_test"
+  "enn_test_internal"
+  "enn_test_internal_lib"
+  "enn_test_module"
+  "enn_test_userdriver"
+  "hw/vendor.samsung_slsi.hardware.enn@1.0-service"
+  "EnnTest_v2_service"
+  "EnnTest_v2_lib"
+)
+
+enn_etc_list=(
+  "vintf/manifest/vendor.samsung_slsi.hardware.enn@1.0-service.xml"
+)
+
+
+########## APIs
+
+adb_download_lists()
+{
+    local list=("$@")
+    adb_cmd_with_lists "download" "push" "${list[@]}"
+}
+
+adb_rm_lists()
+{
+    local list=("$@")
+    adb_cmd_with_lists "rm" "shell rm -f" "${list[@]}"
+}
+
+out_cp_lists()
+{
+    local list=("$@")
+    adb_cmd_with_lists "cp" "" "${list[@]}"
+}
+
+adb_cmd_with_lists()
+{
+    local cmd=$1
+    local opt=$2
+    local path_from=$3
+    local path_to=$4
+    local dir=$5
+    local list=("$@")
+
+    for (( i = 0 ; i < ${#list[@]}; i++ )) ; do
+        if [ $i -gt 4 ]; then
+            if [ "$cmd" == "download" ]; then
+                command="adb $opt $path_from/$dir/${list[$i]} /$path_to/$dir/${list[$i]}"
+            elif [ "$cmd" == "rm" ]; then
+                command="adb $opt /$path_to/$dir/${list[$i]}"
+            elif [ "$cmd" == "cp" ]; then
+                command="cp -rf $path_from/$dir/${list[$i]} $path_to/$dir/${list[$i]}"
+            else
+                echo " ## Not implemented yet: $cmd"
+                exit -1;
+            fi
+            # echo $command
+            $command > /dev/null
+            if [ "$?" != "0" ]; then
+                echo " - NOT UPDATED: $command "
+            else
+                echo " -     UPDATED: $command "
+            fi
+        fi
+    done
+    # $cmd
+}

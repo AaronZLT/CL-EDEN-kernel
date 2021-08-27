@@ -1,0 +1,74 @@
+# thresholds
+thresholds:
+  - &default_zero 0
+  - &default_npu 0.0001
+  - &gpu_iv3 0.0170
+  - &npu_ssd 0.03
+
+# test vector
+test_vector:
+  - NPU_InceptionV3:
+        model: NPU_InceptionV3.nnc
+        input:
+          - NPU_InceptionV3_input_data.bin
+        golden:
+          - NPU_InceptionV3_golden_data.bin
+        threshold: *default_npu
+  - EdgeTPU:
+        model: NPU_mobilenet_edgetpu_tflite.nnc
+        input:
+          - NPU_mobilenet_edgetpu_tflite_input_data.bin
+        golden:
+          - NPU_mobilenet_edgetpu_tflite_golden_data.bin
+        threshold: *default_npu
+  - IV3_GPU:
+        model: GPU_InceptionV3.nnc
+        input:
+          - GPU_InceptionV3_input_data.bin
+        golden:
+          - GPU_InceptionV3_golden_data.bin
+        threshold: *gpu_iv3
+  - DLV3:
+        model: NPU_MV2_Deeplab_V3_plus_MLPerf_tflite.nnc
+        input:
+          - NPU_MV2_Deeplab_V3_plus_MLPerf_tflite_input_data.bin
+        golden:
+          - NPU_MV2_Deeplab_V3_plus_MLPerf_tflite_Q_golden_data.bin
+        threshold: *default_npu
+  - MobileNetSSD:
+        model: NPU_Mobiledet_SSD_tflite.nnc
+        input:
+          - NPU_Mobiledet_SSD_tflite_input_data.bin
+        golden:
+          - NPU_Mobiledet_SSD_tflite_golden_data.bin
+        threshold: *default_npu
+  - NPU_Mobiledet_SSD_tflite:
+        model: NPU_Mobiledet_SSD_tflite.nnc
+        input:
+          - NPU_Mobiledet_SSD_tflite_input_data.bin
+        golden:
+          - NPU_Mobiledet_SSD_tflite_golden_data.bin
+        threshold: *npu_ssd
+  - NPU_01_aic_classifier_cnn:
+        model: NPU_01_aic_classifier_cnn.nnc
+        input:
+          - NPU_01_aic_classifier_cnn_input_data.bin
+        golden:
+          - NPU_01_aic_classifier_cnn_golden_data.bin
+        threshold: *default_zero
+  - NPU_07_LF_segmenter_cnn:
+        model: NPU_07_LF_segmenter_cnn.nnc
+        input:
+          - NPU_07_LF_segmenter_cnn_input_data.bin
+        golden:
+          - NPU_07_LF_segmenter_cnn_golden_data_2.bin
+          - NPU_07_LF_segmenter_cnn_golden_data_1.bin
+          - NPU_07_LF_segmenter_cnn_golden_data_0.bin
+        threshold: *default_zero
+  - NPU_MV2_Deeplab_V3_plus_MLPerf_tflite:
+        model: NPU_MV2_Deeplab_V3_plus_MLPerf_tflite.nnc
+        input:
+          - NPU_MV2_Deeplab_V3_plus_MLPerf_tflite_input_data.bin
+        golden:
+          - NPU_MV2_Deeplab_V3_plus_MLPerf_tflite_Q_golden_data.bin
+        threshold: *default_zero

@@ -1,0 +1,31 @@
+# command count
+command_count:
+  - &e2e_default_iter 100
+  - &e2e_default_repeat 10
+
+# model
+models:
+  - default_models: &default_models
+    - NPU_InceptionV3
+    - EdgeTPU
+#    - DLV3
+#    - MobileNetSSD
+
+# E2E Testcase
+e2e:
+  - description: Block_Library
+    is_lib: true
+    is_block: true
+    check_memleak: false
+    mode: ''
+    iter: *e2e_default_iter
+    repeat: *e2e_default_repeat
+    model: *default_models
+  - description: Nonlock_Library
+    is_lib: true
+    is_block: false
+    check_memleak: false
+    mode: ''
+    iter: *e2e_default_iter
+    repeat: *e2e_default_repeat
+    model: *default_models

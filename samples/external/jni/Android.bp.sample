@@ -1,0 +1,48 @@
+cc_binary {
+    name: "enn_sample_external",
+    srcs: [
+        "enn_sample_external.cc",
+    ],
+    defaults: [
+        "enn_sample_defaults",
+    ],
+}
+
+cc_defaults {
+    name: "enn_sample_defaults",
+    cflags: [
+        "-fexceptions",
+    ],
+    cppflags: [
+        "-std=c++17",
+        "-fexceptions",
+    ],
+    vendor: true,
+    shared_libs: [
+        "libenn",
+        "liblog",
+        "libutils",
+        "libcutils",
+    ],
+    proprietary: true,
+    local_include_dirs: [
+        "include",
+    ],
+}
+
+cc_prebuilt_library_shared {
+    name: "libenn",
+    vendor: true,
+    installable: false,
+    multilib: {
+        lib32: {
+            srcs: ["lib/libenn_public_api_cpp.so"],
+        },
+        lib64: {
+            srcs: ["lib64/libenn_public_api_cpp.so"],
+        }
+    },
+    strip: {
+        none: true,
+    }
+}

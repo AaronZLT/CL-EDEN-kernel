@@ -1,0 +1,12 @@
+# Common CMake Setting
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF) #...without compiler extensions like gnu++11
+set(CMAKE_BUILD_TYPE Debug)
+#set(CMAKE_CXX_FLAGS "-O2 -W -Wall -Wextra -Werror -pthread")  #TODO: remove all warnings
+set(CMAKE_CXX_FLAGS "-O0 -W -Wall -Wextra -pthread")
+
+if(UNIT_TEST)
+enable_testing()  # to run all TC by ctest or ctest --verbose
+endif()
+

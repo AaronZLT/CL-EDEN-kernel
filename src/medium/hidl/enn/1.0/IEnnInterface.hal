@@ -1,0 +1,31 @@
+/*
+ * Copyright (C) 2018 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package vendor.samsung_slsi.hardware.enn@1.0;
+
+import IEnnCallback;
+
+interface IEnnInterface {
+    /* model based interface */
+    init(IEnnCallback cb_sp) generates (int32_t ret);
+    deinit() generates (int32_t ret);
+    open_model(LoadParameter load_param) generates (SessionBufInfo sbi_ret);
+    commit_execution_data(uint64_t model_id, InferenceData exec_data) generates (uint64_t ret);
+    execute_model(vec<uint64_t> exec_id_list) generates (int32_t ret);
+    close_model(uint64_t model_id) generates (int32_t ret);
+
+    custom_interface(uint32_t identifier, GeneralParameter parameter) generates (GeneralParameterReturn ret);
+};

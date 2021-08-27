@@ -1,0 +1,17 @@
+#ifndef SRC_MEDIUM_TYPES_HAL_H_
+#define SRC_MEDIUM_TYPES_HAL_H_
+
+// Header Start
+#include <string>
+#include <vector>
+
+namespace enn {
+namespace hal {
+
+struct Buffer;
+
+struct handle_x86 {
+    int numFds;
+    int data[1];
+    void *va;
+};

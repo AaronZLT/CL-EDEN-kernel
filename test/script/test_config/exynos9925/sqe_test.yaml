@@ -1,0 +1,547 @@
+#test count
+test_count:
+    default_count: &default_count 1
+    open_close_count: &open_close_count 60
+    anr_count: &anr_count 60
+    stress_anr_count: &stress_anr_count 60
+
+# command count
+command_count:
+  - &default_iter 20
+  - &default_repeat 1
+  - &run_iter 200
+  - &run_repeat 3
+  - &open_close_iter 100
+  - &open_close_repeat 1
+  - &multi_stress_iter 1000
+  - &multi_stress_repeat 30
+  - &anr_iter 300000
+  - &anr_repeat 1
+  - &gpu_stress_iter 50
+  - &gpu_stress_repeat 20
+  - &multi_patch_test_iter 1000
+  - &multi_patch_test_repeat 10
+  - &gpu_patch_test_iter 50
+  - &gpu_patch_test_repeat 10
+
+
+# commands
+commands:
+  - run_block: &run_block
+        model: NPU_InceptionV3
+        is_lib: true
+        is_block: true
+        is_anr: false
+        tc_cnt: *default_count
+  - run_nonblock: &run_nonblock
+        model: NPU_InceptionV3
+        is_lib: true
+        is_block: false
+        is_anr: false
+        tc_cnt: *default_count
+  - run_block_service: &run_block_service
+        model: NPU_InceptionV3
+        is_lib: false
+        is_block: true
+        is_anr: false
+        tc_cnt: *default_count
+  - run_nonblock_service: &run_nonblock_service
+        model: NPU_InceptionV3
+        is_lib: false
+        is_block: false
+        is_anr: false
+        tc_cnt: *default_count
+
+
+#SQE Testcase
+sqe:
+    # Run
+  - tc_id : 1
+    type: run
+    description: IV3_BlockNPU
+    check_memleak: true
+    subcommands:
+      - <<: *run_block
+        iter: *run_iter
+        repeat: *run_repeat
+  - tc_id : 2
+    type: run
+    description: IV3_NonBlockNPU
+    check_memleak: true
+    subcommands:
+      - <<: *run_nonblock
+        iter: *run_iter
+        repeat: *run_repeat
+  - tc_id : 3
+    type: run
+    description: IV3_BlockGPU
+    check_memleak: true
+    subcommands:
+      - <<: *run_block
+        model: IV3_GPU
+        iter: *run_iter
+        repeat: *run_repeat
+  - tc_id : 4
+    type: run
+    description: IV3_NonBlockGPU
+    check_memleak: true
+    subcommands:
+      - <<: *run_nonblock
+        model: IV3_GPU
+        iter: *run_iter
+        repeat: *run_repeat
+  - tc_id : 5
+    type: run
+    description: IV3_BlockNPU_Service
+    check_memleak: true
+    subcommands:
+      - <<: *run_block_service
+        iter: *run_iter
+        repeat: *run_repeat
+  - tc_id : 6
+    type: run
+    description: IV3_NonBlockNPU_Service
+    check_memleak: true
+    subcommands:
+      - <<: *run_nonblock_service
+        iter: *run_iter
+        repeat: *run_repeat
+  - tc_id : 7
+    type: run
+    description: IV3_BlockGPU_Service
+    check_memleak: true
+    subcommands:
+      - <<: *run_block_service
+        model: IV3_GPU
+        iter: *run_iter
+        repeat: *run_repeat
+  - tc_id : 8
+    type: run
+    description: IV3_NonBlockGPU_Service
+    check_memleak: true
+    subcommands:
+      - <<: *run_nonblock_service
+        model: IV3_GPU
+        iter: *run_iter
+        repeat: *run_repeat
+
+    # Open_Close
+  - tc_id : 9
+    type: open_close
+    description: IV3_OpenClose_BlockNPU
+    check_memleak: true
+    subcommands:
+      - <<: *run_block
+        iter: *open_close_iter
+        repeat: *open_close_repeat
+        tc_cnt: *open_close_count
+  - tc_id : 10
+    type: open_close
+    description: IV3_OpenClose_NonBlockNPU
+    check_memleak: true
+    subcommands:
+      - <<: *run_nonblock
+        iter: *open_close_iter
+        repeat: *open_close_repeat
+        tc_cnt: *open_close_count
+  - tc_id : 11
+    type: open_close
+    description: IV3_OpenClose_BlockNPU_Service
+    check_memleak: true
+    subcommands:
+      - <<: *run_block_service
+        iter: *open_close_iter
+        repeat: *open_close_repeat
+        tc_cnt: *open_close_count
+  - tc_id : 12
+    type: open_close
+    description: IV3_OpenClose_NonBlockNPU_Service
+    check_memleak: true
+    subcommands:
+      - <<: *run_nonblock_service
+        iter: *open_close_iter
+        repeat: *open_close_repeat
+        tc_cnt: *open_close_count
+
+    # Multiple
+  - tc_id : 13
+    type: multi_stress
+    description: IV3_Multi_NonblockNPU
+    check_memleak: true
+    subcommands:
+      - <<: *run_nonblock
+        iter: *multi_stress_iter
+        repeat: *multi_stress_repeat
+      - <<: *run_nonblock
+        iter: *multi_stress_iter
+        repeat: *multi_stress_repeat
+  - tc_id : 14
+    type: multi_stress
+    description: IV3_Multi_BlockNPU
+    check_memleak: true
+    subcommands:
+      - <<: *run_block
+        iter: *multi_stress_iter
+        repeat: *multi_stress_repeat
+      - <<: *run_block
+        iter: *multi_stress_iter
+        repeat: *multi_stress_repeat
+  - tc_id : 15
+    type: multi_stress
+    description: IV3_Multi_ComboNPU
+    check_memleak: true
+    subcommands:
+      - <<: *run_block
+        iter: *multi_stress_iter
+        repeat: *multi_stress_repeat
+      - <<: *run_nonblock
+        iter: *multi_stress_iter
+        repeat: *multi_stress_repeat
+  - tc_id : 16
+    type: multi_stress
+    description: IV3_Multi_NonblockNPU_Service
+    check_memleak: true
+    subcommands:
+      - <<: *run_nonblock_service
+        iter: *multi_stress_iter
+        repeat: *multi_stress_repeat
+      - <<: *run_nonblock_service
+        iter: *multi_stress_iter
+        repeat: *multi_stress_repeat
+  - tc_id : 17
+    type: multi_stress
+    description: IV3_Multi_BlockNPU_Service
+    check_memleak: true
+    subcommands:
+      - <<: *run_block_service
+        iter: *multi_stress_iter
+        repeat: *multi_stress_repeat
+      - <<: *run_block_service
+        iter: *multi_stress_iter
+        repeat: *multi_stress_repeat
+  - tc_id : 18
+    type: multi_stress
+    description: IV3_Multi_ComboNPU_Service
+    check_memleak: true
+    subcommands:
+      - <<: *run_block_service
+        iter: *multi_stress_iter
+        repeat: *multi_stress_repeat
+      - <<: *run_nonblock_service
+        iter: *multi_stress_iter
+        repeat: *multi_stress_repeat
+
+    # Stress
+  - tc_id : 19
+    type: multi_stress
+    description: IV3_Stress_Nonblock
+    check_memleak: true
+    subcommands:
+      - <<: *run_nonblock
+        iter: *multi_stress_iter
+        repeat: *multi_stress_repeat
+      - <<: *run_nonblock
+        model: IV3_GPU
+        iter: *gpu_stress_iter
+        repeat: *gpu_stress_repeat
+  - tc_id : 20
+    type: multi_stress
+    description: IV3_Stress_Block
+    check_memleak: true
+    subcommands:
+      - <<: *run_block
+        iter: *multi_stress_iter
+        repeat: *multi_stress_repeat
+      - <<: *run_block
+        model: IV3_GPU
+        iter: *gpu_stress_iter
+        repeat: *gpu_stress_repeat
+  - tc_id : 21
+    type: multi_stress
+    description: IV3_Stress_Combo
+    check_memleak: true
+    subcommands:
+      - <<: *run_block
+        iter: *multi_stress_iter
+        repeat: *multi_stress_repeat
+      - <<: *run_nonblock
+        model: IV3_GPU
+        iter: *gpu_stress_iter
+        repeat: *gpu_stress_repeat
+  - tc_id : 22
+    type: multi_stress
+    description: IV3_Stress_Nonblock_Service
+    check_memleak: true
+    subcommands:
+      - <<: *run_nonblock_service
+        iter: *multi_stress_iter
+        repeat: *multi_stress_repeat
+      - <<: *run_nonblock_service
+        model: IV3_GPU
+        iter: *gpu_stress_iter
+        repeat: *gpu_stress_repeat
+  - tc_id : 23
+    type: multi_stress
+    description: IV3_Stress_Block_Service
+    check_memleak: true
+    subcommands:
+      - <<: *run_block_service
+        iter: *multi_stress_iter
+        repeat: *multi_stress_repeat
+      - <<: *run_block_service
+        model: IV3_GPU
+        iter: *gpu_stress_iter
+        repeat: *gpu_stress_repeat
+  - tc_id : 24
+    type: multi_stress
+    description: IV3_Stress_Combo_Service
+    check_memleak: true
+    subcommands:
+      - <<: *run_block_service
+        iter: *multi_stress_iter
+        repeat: *multi_stress_repeat
+      - <<: *run_nonblock_service
+        model: IV3_GPU
+        iter: *gpu_stress_iter
+        repeat: *gpu_stress_repeat
+
+    # ANR
+  - tc_id : 25
+    type: anr
+    description: IV3_ANR_NonblockNPU
+    check_memleak: true
+    subcommands:
+      - <<: *run_nonblock
+        iter: *default_iter
+        repeat: *default_repeat
+      - <<: *run_nonblock
+        is_anr: true
+        iter: *anr_iter
+        repeat: *anr_repeat
+        tc_cnt: *anr_count
+  - tc_id : 26
+    type: anr
+    description: IV3_ANR_BlockNPU
+    check_memleak: true
+    subcommands:
+      - <<: *run_block
+        iter: *default_iter
+        repeat: *default_repeat
+      - <<: *run_block
+        is_anr: true
+        iter: *anr_iter
+        repeat: *anr_repeat
+        tc_cnt: *anr_count
+  - tc_id : 27
+    type: anr
+    description: IV3_ANR_ComboNPU
+    check_memleak: true
+    subcommands:
+      - <<: *run_block
+        iter: *default_iter
+        repeat: *default_repeat
+      - <<: *run_nonblock
+        is_anr: true
+        iter: *anr_iter
+        repeat: *anr_repeat
+        tc_cnt: *anr_count
+  - tc_id : 28
+    type: anr
+    description: IV3_ANR_NonblockNPU_Service
+    check_memleak: true
+    subcommands:
+      - <<: *run_nonblock_service
+        iter: *default_iter
+        repeat: *default_repeat
+      - <<: *run_nonblock_service
+        is_anr: true
+        iter: *anr_iter
+        repeat: *anr_repeat
+        tc_cnt: *anr_count
+  - tc_id : 29
+    type: anr
+    description: IV3_ANR_BlockNPU_Service
+    check_memleak: true
+    subcommands:
+      - <<: *run_block_service
+        iter: *default_iter
+        repeat: *default_repeat
+      - <<: *run_block_service
+        is_anr: true
+        iter: *anr_iter
+        repeat: *anr_repeat
+        tc_cnt: *anr_count
+  - tc_id : 30
+    type: anr
+    description: IV3_ANR_ComboNPU_Service
+    check_memleak: true
+    subcommands:
+      - <<: *run_block_service
+        iter: *default_iter
+        repeat: *default_repeat
+      - <<: *run_nonblock_service
+        is_anr: true
+        iter: *anr_iter
+        repeat: *anr_repeat
+        tc_cnt: *anr_count
+
+    # Stress_ANR
+  - tc_id : 31
+    type: stress_anr
+    description: IV3_Stress_ANR_Nonblock
+    check_memleak: true
+    subcommands:
+      - <<: *run_nonblock
+        iter: *multi_stress_iter
+        repeat: *multi_stress_repeat
+      - <<: *run_nonblock
+        model: IV3_GPU
+        iter: *gpu_stress_iter
+        repeat: *gpu_stress_repeat
+      - <<: *run_nonblock
+        is_anr: true
+        iter: *anr_iter
+        repeat: *anr_repeat
+        tc_cnt: *stress_anr_count
+  - tc_id : 32
+    type: stress_anr
+    description: IV3_Stress_ANR_Block
+    check_memleak: true
+    subcommands:
+      - <<: *run_block
+        iter: *multi_stress_iter
+        repeat: *multi_stress_repeat
+      - <<: *run_block
+        model: IV3_GPU
+        iter: *gpu_stress_iter
+        repeat: *gpu_stress_repeat
+      - <<: *run_block
+        is_anr: true
+        iter: *anr_iter
+        repeat: *anr_repeat
+        tc_cnt: *stress_anr_count
+  - tc_id : 33
+    type: stress_anr
+    description: IV3_Stress_ANR_Combo
+    check_memleak: true
+    subcommands:
+      - <<: *run_block
+        iter: *multi_stress_iter
+        repeat: *multi_stress_repeat
+      - <<: *run_block
+        model: IV3_GPU
+        iter: *gpu_stress_iter
+        repeat: *gpu_stress_repeat
+      - <<: *run_nonblock
+        is_anr: true
+        iter: *anr_iter
+        repeat: *anr_repeat
+        tc_cnt: *stress_anr_count
+  - tc_id : 34
+    type: stress_anr
+    description: IV3_Stress_ANR_Nonblock_Service
+    check_memleak: true
+    subcommands:
+      - <<: *run_nonblock_service
+        iter: *multi_stress_iter
+        repeat: *multi_stress_repeat
+      - <<: *run_nonblock_service
+        model: IV3_GPU
+        iter: *gpu_stress_iter
+        repeat: *gpu_stress_repeat
+      - <<: *run_nonblock_service
+        is_anr: true
+        iter: *anr_iter
+        repeat: *anr_repeat
+        tc_cnt: *stress_anr_count
+  - tc_id : 35
+    type: stress_anr
+    description: IV3_Stress_ANR_Block_Service
+    check_memleak: true
+    subcommands:
+      - <<: *run_block_service
+        iter: *multi_stress_iter
+        repeat: *multi_stress_repeat
+      - <<: *run_block_service
+        model: IV3_GPU
+        iter: *gpu_stress_iter
+        repeat: *gpu_stress_repeat
+      - <<: *run_block_service
+        is_anr: true
+        iter: *anr_iter
+        repeat: *anr_repeat
+        tc_cnt: *stress_anr_count
+  - tc_id : 36
+    type: stress_anr
+    description: IV3_Stress_ANR_Combo_Service
+    check_memleak: true
+    subcommands:
+      - <<: *run_block_service
+        iter: *multi_stress_iter
+        repeat: *multi_stress_repeat
+      - <<: *run_block_service
+        model: IV3_GPU
+        iter: *gpu_stress_iter
+        repeat: *gpu_stress_repeat
+      - <<: *run_nonblock_service
+        is_anr: true
+        iter: *anr_iter
+        repeat: *anr_repeat
+        tc_cnt: *stress_anr_count
+# for CI patch test
+  - tc_id : 37
+    type: multi_stress
+    description: IV3_Multi_ComboNPU_For_CI_patch_test
+    check_memleak: true
+    subcommands:
+      - <<: *run_block
+        iter: *multi_patch_test_iter
+        repeat: *multi_patch_test_repeat
+      - <<: *run_nonblock
+        iter: *multi_patch_test_iter
+        repeat: *multi_patch_test_repeat
+  - tc_id : 38
+    type: multi_stress
+    description: IV3_Multi_ComboNPU_Service_For_CI_patch_test
+    check_memleak: true
+    subcommands:
+      - <<: *run_block_service
+        iter: *multi_patch_test_iter
+        repeat: *multi_patch_test_repeat
+      - <<: *run_nonblock_service
+        iter: *multi_patch_test_iter
+        repeat: *multi_patch_test_repeat
+  - tc_id : 39
+    type: stress_anr
+    description: IV3_Stress_ANR_Combo_For_CI_patch_test
+    check_memleak: true
+    subcommands:
+      - <<: *run_block
+        iter: *multi_patch_test_iter
+        repeat: *multi_patch_test_repeat
+      - <<: *run_block
+        model: IV3_GPU
+        iter: *gpu_patch_test_iter
+        repeat: *gpu_patch_test_repeat
+      - <<: *run_nonblock
+        is_anr: true
+        iter: *anr_iter
+        repeat: *anr_repeat
+        tc_cnt: *stress_anr_count
+  - tc_id : 40
+    type: stress_anr
+    description: IV3_Stress_ANR_Combo_Service_For_CI_patch_test
+    check_memleak: true
+    subcommands:
+      - <<: *run_block_service
+        iter: *multi_stress_iter
+        repeat: *multi_stress_repeat
+      - <<: *run_block_service
+        model: IV3_GPU
+        iter: *gpu_patch_test_iter
+        repeat: *gpu_patch_test_repeat
+      - <<: *run_nonblock_service
+        is_anr: true
+        iter: *anr_iter
+        repeat: *anr_repeat
+        tc_cnt: *stress_anr_count

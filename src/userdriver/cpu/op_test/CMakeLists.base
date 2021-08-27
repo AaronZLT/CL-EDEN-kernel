@@ -1,0 +1,28 @@
+cmake_minimum_required(VERSION 3.20)
+project(enn_cpu_ud_operator_test)
+
+set(SRC_TOP ${CMAKE_CURRENT_SOURCE_DIR}/../../..)
+if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)  # check if local build
+include(${SRC_TOP}/x86_build.cmake)
+endif()
+
+include_directories(${SRC_TOP})
+
+set(LIBRARY_FILES
+    enn_dbg_utils
+    ${GTEST_MAIN_LDFLAGS}
+    ${GTEST_LDFLAGS})
+
+set(EXTRA_FILES
+    ${SRC_TOP}/userdriver/cpu/operators/neon_impl/BboxUtil_batch_single.cpp
+    ${SRC_TOP}/userdriver/cpu/operators/neon_impl/BboxUtil.cpp
+    ${SRC_TOP}/userdriver/cpu/operators/neon_impl/DetectionOutput.cpp
+    ${SRC_TOP}/userdriver/cpu/operators/neon_impl/NormalizedBbox.cpp
+)
+if(UNIT_TEST)
+    add_definitions(-DUNIT_TEST)
+endif()
+enable_testing()
+#-------------------------------------------------------------------#
+# Linux(emulator) build is possible for only operator not used NEON #
+#-------------------------------------------------------------------#

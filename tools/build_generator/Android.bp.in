@@ -1,0 +1,681 @@
+/*
+ * ======================================
+ * ** AUTO GENERATED **
+ * Copyright (c) 2020 Samsung Electronics Co., Ltd.
+ * Generate Android.bp for ENN Framework @NAME@
+ *
+ * Build target: @BUILD_TARGET@
+ * Build options (@NAME@)
+ * ......................................@BUILD_OPTIONS@
+ * ======================================
+ */
+
+cc_defaults {
+    name: "coverage_defaults",
+    cflags: [
+      @BUILD_FLAGS_COVERAGE@
+    ],
+    ldflags: [
+      @LD_FLAGS_COVERAGE@
+    ],
+    native_coverage: @BOOL_STRING_COVERAGE@
+}
+
+cc_defaults {
+    name: "enn_hidl_defaults",
+    cflags: [
+        "-DENN_MEDIUM_IF_HIDL",
+        @BUILD_EXCEPTION_FLAGS@
+        @BUILD_VELOCE_FLAGS@
+    ],
+    cppflags: [
+        "-DENN_MEDIUM_IF_HIDL",
+        "-std=c++17",
+        @BUILD_EXCEPTION_FLAGS@
+        @BUILD_VELOCE_FLAGS@
+    ],
+    shared_libs: [
+        @ANDROID_HIDL_SO_SHARED_LIBS@
+        @ANDROID_HIDL_LIBS@
+    ],
+    defaults: [
+        "coverage_defaults",
+    ],
+}
+
+cc_defaults {
+    name: "enn_service_defaults",
+    cflags: [
+        "-DENN_HIDL_VER=@ENN_HIDL_VER@",
+        @BUILD_FLAGS@
+        @BUILD_EXCEPTION_FLAGS@
+        "-std=c++17",
+    ],
+    cppflags: [
+        "-DENN_HIDL_VER=@ENN_HIDL_VER@",
+        @BUILD_FLAGS@
+        @BUILD_EXCEPTION_FLAGS@
+    ],
+    defaults: [
+        "coverage_defaults",
+    ],
+}
+
+cc_defaults {
+    name: "enn_defaults",
+    cflags: [
+        @BUILD_FLAGS_COMMON@
+        @BUILD_VELOCE_FLAGS@
+        @BUILD_EXCEPTION_FLAGS@
+    ],
+    cppflags: [
+        @BUILD_FLAGS_COMMON@
+        @BUILD_VELOCE_FLAGS@
+        @BUILD_EXCEPTION_FLAGS@
+    ],
+    shared_libs: [
+        "liblog",
+        "libcutils",
+        "libutils",
+        "libenn_common_utils",
+        @ANDROID_DEVICE_BUFFER_LIBS@
+    ],
+    export_include_dirs: [
+        ".",
+        "userdriver/gpu/third_party/opencl_stub/CL",
+        "userdriver/gpu/third_party/opencl_stub",
+    ],
+    defaults: [
+        "coverage_defaults",
+    ],
+}
+
+cc_defaults {
+    name: "test_build_options",
+    cflags: [
+        "-Wno-missing-field-initializers",
+        "-Wno-unused-parameter",
+    ],
+    cppflags: [
+        "-Wno-missing-field-initializers",
+        "-Wno-unused-parameter",
+    ],
+
+}
+
+cc_defaults {
+    name: "asan_build_options",
+    cflags: [
+        @BUILD_FLAGS_SANITIZER@
+    ],
+}
+
+cc_library_shared {
+    name: "libenn_common_utils",
+    cflags: [
+        @BUILD_FLAGS_COMMON@
+        "-Wno-write-strings"
+    ],
+    defaults: [
+        "enn_hidl_defaults",  // for HIDL based utilities
+    ],
+    vendor: true,
+    compile_multilib: "both",
+    srcs: [
+        "common/enn_debug.cc",
+        "common/enn_utils.cc",
+    ],
+    export_include_dirs: [
+        ".",
+    ],
+    shared_libs: [
+        "liblog",
+        "libcutils",
+        "libutils",
+    ],
+    static_libs: [
+    ],
+}
+
+cc_library_shared {
+    name: "libOpenCL",
+    vendor: true,
+    owner: "samsung",
+    proprietary: true,
+    soc_specific: true,
+    compile_multilib: "both",
+    installable: false,
+    rtti: true,
+    srcs: [
+        "userdriver/gpu/third_party/opencl_stub/*.c"
+    ],
+    local_include_dirs: [
+        "userdriver/gpu/third_party/opencl_stub/CL",
+        "userdriver/gpu/third_party/opencl_stub",
+    ]
+}
+
+
+cc_library_static {
+    name: "libenn_memory_manager",
+    defaults: [
+        "enn_defaults",
+        "asan_build_options",
+    ],
+    vendor: true,
+    compile_multilib: "both",
+    cflags: [
+        @BUILD_FLAGS_ION@
+    ],
+    srcs: [
+        "common/enn_memory_manager.cc",
+        "common/enn_memory_allocator_device_buffer.cc",
+    ],
+    shared_libs: [
+        @ANDROID_DEVICE_BUFFER_LIBS@
+    ],
+}
+
+cc_library_shared {
+    name: "libenn_profiler",
+    defaults: [
+        "enn_defaults",
+        "asan_build_options",
+    ],
+    rtti: true,
+    vendor: true,
+    compile_multilib: "both",
+    cflags: [
+        "-Wno-format-security",
+    ],
+    srcs: [
+        "tool/profiler/ExynosNnProfiler.cpp",
+        "tool/profiler/ProfileData.cpp",
+        "tool/profiler/ProfileTreeNode.cpp",
+        "tool/profiler/ProfileWatcher.cpp"
+    ],
+}
+
+cc_library_shared {
+    name: "libenn_model",
+    defaults: [
+        "enn_defaults",
+        "enn_hidl_defaults",
+        "asan_build_options",
+    ],
+    rtti: true,
+    vendor: true,
+    compile_multilib: "both",
+    srcs: [
+        "model/parser/parser.cc",
+        "model/parser/strategy/nnc_parse_strategy.cc",
+        "model/parser/strategy/cgo_parse_strategy.cc",
+        "model/parser/strategy/coded_parse_strategy.cc",
+        "model/raw/model.cc",
+        "model/generator/generator.cc",
+        "runtime/pool/manager.cc",
+    ],
+}
+
+cc_library_shared {
+    name: "libenn_public_api_cpp",
+    defaults: [
+    ],
+    vendor: true,
+    compile_multilib: "both",
+    shared_libs: [
+        "libenn_user.samsung_slsi"
+    ],
+    srcs: [
+        "client/enn_api-public.cc",
+    ],
+    static_libs: [
+    ],
+}
+
+cc_library_shared {
+    name: "libeden_rt_stub.samsung_slsi",
+    defaults: [
+    ],
+    vendor: true,
+    compile_multilib: "both",
+    shared_libs: [
+        "libenn_user.samsung_slsi"
+    ],
+    srcs: [
+        "rt_stub/eden_rt_stub.cc",
+    ],
+    static_libs: [
+    ],
+}
+
+cc_library_shared {
+    name: "libenn_public_api_cpp_lib",
+    defaults: [
+    ],
+    vendor: true,
+    compile_multilib: "both",
+    shared_libs: [
+        "libenn_user_lib"
+    ],
+    srcs: [
+        "client/enn_api-public.cc",
+    ],
+    static_libs: [
+    ],
+}
+
+cc_library_shared {
+    name: "libenn_user.samsung_slsi",
+    defaults: [
+        "enn_defaults",
+        "enn_hidl_defaults",
+        "asan_build_options",
+    ],
+    vendor: true,
+    compile_multilib: "both",
+    shared_libs: [
+        @IMPORT_PROFILER_LIB@
+    ],
+    srcs: [
+        "client/enn_api.cc",
+        "client/enn_context_manager.cc",
+        "medium/enn_medium_interface.cc",
+    ],
+    static_libs: [
+        "libenn_memory_manager",
+    ],
+}
+
+cc_library_shared {
+    name: "libeden_for_enn",
+    vendor: true,
+    compile_multilib: "both",
+    shared_libs: [
+        "liblog",
+        "libeden_rt_stub.samsung_slsi"
+    ],
+    srcs: [
+        "rt_stub/eden_nn_api.cpp",
+        "rt_stub/eden_nn.cpp"
+    ],
+    cppflags: [
+        "-DEDEN_DEBUG",
+        "-DANDROID_LOG",
+    ],
+}
+
+cc_library_shared {
+    name: "libenn_user_lib",
+    defaults: [
+        "enn_defaults",
+        "asan_build_options",
+    ],
+    vendor: true,
+    compile_multilib: "both",
+    shared_libs: [
+        "libenn_engine_lib",
+        @IMPORT_PROFILER_LIB@
+    ],
+    srcs: [
+        "client/enn_api.cc",
+        "client/enn_context_manager.cc",
+        "medium/enn_medium_interface.cc",
+    ],
+    static_libs: [
+        "libenn_memory_manager",
+    ],
+}
+
+cc_library_shared {
+    name: "libenn_user_driver_cpu",
+    defaults: [
+        "enn_defaults",
+    ],
+    cflags: [
+        "-DNEON_OPT"
+    ],
+    cppflags: [
+        "-DNEON_OPT"
+    ],
+    vendor: true,
+    compile_multilib: "both",
+    rtti: true,
+    srcs: [
+        "userdriver/cpu/cpu_userdriver.cc",
+        "userdriver/cpu/cpu_op_constructor.cc",
+        "userdriver/cpu/cpu_op_executor.cc",
+        "userdriver/cpu/common/*.cpp",
+        "userdriver/cpu/operators/*.cpp",
+        "userdriver/cpu/operators/neon_impl/*.cpp"
+    ],
+    shared_libs: [
+        "libenn_common_utils",
+        @IMPORT_PROFILER_LIB@
+    ],
+}
+
+cc_library_shared {
+    name: "libenn_user_driver_gpu",
+    defaults: [
+        "enn_defaults",
+    ],
+    vendor: true,
+    compile_multilib: "both",
+    rtti: true,
+    srcs: [
+        "userdriver/gpu/gpu_userdriver.cc",
+        "userdriver/gpu/gpu_op_constructor.cc",
+        "userdriver/gpu/gpu_op_executor.cc",
+        "userdriver/gpu/operators/*.cpp",
+        "userdriver/gpu/operators/*/*.cpp",
+        "userdriver/gpu/common/*.cpp",
+    ],
+    shared_libs: [
+        "libenn_common_utils",
+        "libOpenCL",
+        @IMPORT_PROFILER_LIB@
+    ],
+    local_include_dirs: [
+        "userdriver/gpu/third_party/half",
+    ],
+}
+
+cc_library_shared {
+    name: "libenn_user_driver_unified",
+    defaults: [
+        "enn_defaults",
+    ],
+    vendor: true,
+    compile_multilib: "both",
+    rtti: true,
+    cflags: [
+        @BUILD_FLAGS_DD@
+    ],
+    srcs: [
+        "userdriver/unified/npu_userdriver.cc",
+        "userdriver/unified/link_vs4l.cc",
+        "userdriver/unified/dsp_userdriver.cc",
+        "userdriver/unified/dsp_bin_info.cc",
+        "userdriver/common/eden_osal/*.c",
+        "userdriver/unified/unified_userdriver.cc",
+    ],
+    shared_libs: [
+        "libenn_common_utils",
+        "libenn_fw_graph_parser",
+        "libenn_preset_config",
+        @IMPORT_PROFILER_LIB@
+    ],
+    local_include_dirs: [
+        "userdriver/unified",
+        "userdriver/common/eden_osal",
+        "tool/pamir_fw_parser",
+    ],
+}
+
+cc_library_shared {
+    name: "libenn_engine",
+    rtti: true,
+    defaults: [
+        "enn_defaults",
+        "enn_hidl_defaults",
+        "asan_build_options",
+    ],
+    vendor: true,
+    compile_multilib: "both",
+    srcs: [
+        "runtime/engine.cc",
+    ],
+    static_libs: [
+        "libenn_memory_manager",
+    ],
+    shared_libs: [
+        "libenn_model",
+        "libenn_user_driver_cpu",
+        "libenn_user_driver_gpu",
+        "libenn_user_driver_unified",
+        @IMPORT_PROFILER_LIB@
+    ],
+}
+
+cc_library_shared {
+    name: "libenn_engine_lib",
+    defaults: [
+        "enn_defaults",
+        "asan_build_options",
+    ],
+    rtti: true,
+    vendor: true,
+    compile_multilib: "both",
+    srcs: [
+        "runtime/engine.cc",
+    ],
+    static_libs: [
+        "libenn_memory_manager",
+    ],
+    shared_libs: [
+        "libenn_model",
+        "libenn_user_driver_cpu",
+        "libenn_user_driver_gpu",
+        "libenn_user_driver_unified",
+        @IMPORT_PROFILER_LIB@
+    ],
+}
+
+cc_binary {
+    name: "enn_test_internal",
+    rtti: true,
+    defaults: [
+        "enn_defaults",
+        "enn_hidl_defaults",
+        "enn_service_defaults",
+        "test_build_options",
+    ],
+    srcs: [
+        "test/internal/unit/enn_gtest_internal_unittest_main.cc",
+        @ENN_TEST_INTERNAL_FILES@
+    ],
+    vendor: true,
+    static_libs: [
+        "libgtest",
+        "libgtest_main",
+        "libenn_memory_manager",
+    ],
+    shared_libs: [
+        "libenn_user.samsung_slsi",
+        @IMPORT_PROFILER_LIB@
+    ],
+}
+
+cc_binary {
+    name: "enn_test_internal_lib",
+    rtti: true,
+    defaults: [
+        "enn_defaults",
+        "enn_service_defaults",
+    ],
+    srcs: [
+        "test/internal/unit/enn_gtest_internal_unittest_main.cc",
+        @ENN_TEST_INTERNAL_FILES@
+    ],
+    vendor: true,
+    static_libs: [
+        "libgtest",
+        "libgtest_main",
+        "libenn_memory_manager",
+    ],
+    shared_libs: [
+        "libenn_user_lib",
+        @IMPORT_PROFILER_LIB@
+    ],
+}
+
+cc_binary {
+    name: "enn_test_module",
+    rtti: true,
+    defaults: [
+        "enn_defaults",
+        "enn_hidl_defaults",
+        "enn_service_defaults",
+        "test_build_options",
+    ],
+    srcs: [
+        "test/internal/unit/enn_gtest_internal_unittest_main.cc",
+        @ENN_MODULE_TEST_FILES@
+    ],
+    vendor: true,
+    static_libs: [
+        "libgtest",
+        "libgtest_main",
+        "libenn_memory_manager",
+    ],
+    shared_libs: [
+        "libenn_user.samsung_slsi",
+        "libenn_model",
+        "libenn_engine",
+        "libenn_preset_config",
+    ],
+}
+
+cc_binary {
+    name: "enn_test_userdriver",
+    rtti: true,
+    defaults: [
+        "enn_defaults",
+        "enn_hidl_defaults",
+        "enn_service_defaults",
+    ],
+    srcs: [
+        "test/internal/unit/enn_gtest_internal_unittest_main.cc",
+        @ENN_USERDRIVER_TEST_FILES@
+    ],
+    vendor: true,
+    static_libs: [
+        "libgtest",
+        "libgtest_main",
+        "libenn_memory_manager",
+    ],
+    shared_libs: [
+        "libenn_user.samsung_slsi",
+        "libenn_model",
+        "libenn_user_driver_cpu",
+        "libenn_user_driver_gpu",
+        "libenn_user_driver_unified",
+        "libenn_preset_config",
+    ],
+}
+
+cc_binary {
+    name: "enn_cpu_op_test",
+    defaults: [
+        "enn_defaults",
+    ],
+    srcs: [
+        @ENN_CPU_OPERATOR_TEST_FILES@
+    ],
+    vendor: true,
+    rtti: true,
+    static_libs: [
+        "libgtest",
+        "libgtest_main",
+    ],
+    shared_libs: [
+        "libenn_user_driver_cpu",
+    ],
+}
+
+cc_binary {
+    name: "enn_gpu_op_test",
+    defaults: [
+        "enn_defaults",
+    ],
+    srcs: [
+        "userdriver/gpu/op_test/*.cpp"
+    ],
+    vendor: true,
+    rtti: true,
+    static_libs: [
+        "libgtest",
+        "libgtest_main",
+    ],
+    shared_libs: [
+        "libenn_user_driver_gpu",
+    ],
+}
+
+cc_library_shared {
+    name: "libenn_jsoncpp",
+    defaults: [
+        "enn_defaults",
+    ],
+    vendor: true,
+    compile_multilib: "both",
+    rtti: true,
+    srcs: [
+        "preset/jsoncpp/jsoncpp.cpp",
+    ],
+    shared_libs: [
+        "libenn_common_utils",
+    ],
+}
+
+cc_library_shared {
+    name: "libenn_preset_config",
+    defaults: [
+        "enn_defaults",
+    ],
+    vendor: true,
+    compile_multilib: "both",
+    rtti: true,
+    srcs: [
+        "preset/preset_config.cc",
+    ],
+    shared_libs: [
+        "libenn_common_utils",
+        "libenn_jsoncpp",
+    ],
+}
+
+cc_binary {
+    name: "vendor.samsung_slsi.hardware.enn@1.0-service",
+    defaults: [
+        "enn_defaults",
+        "enn_hidl_defaults",
+        "enn_service_defaults",
+        "asan_build_options",
+    ],
+    srcs: [
+        "medium/enn_medium_interface.cc",
+        "medium/hidl/enn/1.0/default/EnnInterface.cpp",
+        "medium/hidl/enn/1.0/default/ServiceInterface.cc",
+    ],
+    vendor: true,
+    relative_install_path: "hw",
+    shared_libs: [
+        "libenn_engine",
+        @IMPORT_PROFILER_LIB@
+    ],
+    static_libs: [
+        "libenn_memory_manager",
+    ],
+    vintf_fragments: ["medium/hidl/enn/1.0/vendor.samsung_slsi.hardware.enn@1.0-service.xml"],
+}
+
+cc_prebuilt_library_shared {
+    name: "libenn_fw_graph_parser",
+    vendor: true,
+    multilib: {
+        lib32: {
+            srcs: ["fw_parser/lib/libenn_fw_graph_parser.so"],
+        },
+        lib64: {
+            srcs: ["fw_parser/lib64/libenn_fw_graph_parser.so"],
+        }
+    },
+    shared_libs: [
+        "libenn_common_utils",
+    ],
+    strip: {
+        none: true,
+    }
+}

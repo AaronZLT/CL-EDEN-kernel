@@ -1,0 +1,64 @@
+filegroup {
+    name: "vendor.samsung_slsi.hardware.enn@1.0_hal",
+    srcs: [
+        "types.hal",
+        "IEnnInterface.hal",
+        "IEnnCallback.hal",
+    ],
+}
+
+genrule {
+    name: "vendor.samsung_slsi.hardware.enn@1.0_genc++",
+    tools: ["hidl-gen"],
+    cmd: "$(location hidl-gen) -o $(genDir) -Lc++-sources -randroid.hidl:system/libhidl/transport -rvendor.samsung_slsi.hardware:vendor/samsung_slsi/exynos/enn/source/src/medium/hidl vendor.samsung_slsi.hardware.enn@1.0",
+    srcs: [
+        ":vendor.samsung_slsi.hardware.enn@1.0_hal",
+    ],
+    out: [
+        "vendor/samsung_slsi/hardware/enn/1.0/types.cpp",
+        "vendor/samsung_slsi/hardware/enn/1.0/EnnInterfaceAll.cpp",
+        "vendor/samsung_slsi/hardware/enn/1.0/EnnCallbackAll.cpp",
+    ],
+}
+
+genrule {
+    name: "vendor.samsung_slsi.hardware.enn@1.0_genc++_headers",
+    tools: ["hidl-gen"],
+    cmd: "$(location hidl-gen) -o $(genDir) -Lc++-headers -randroid.hidl:system/libhidl/transport -rvendor.samsung_slsi.hardware:vendor/samsung_slsi/exynos/enn/source/src/medium/hidl vendor.samsung_slsi.hardware.enn@1.0",
+
+    srcs: [
+        ":vendor.samsung_slsi.hardware.enn@1.0_hal",
+    ],
+    out: [
+        "vendor/samsung_slsi/hardware/enn/1.0/types.h",
+        "vendor/samsung_slsi/hardware/enn/1.0/hwtypes.h",
+        "vendor/samsung_slsi/hardware/enn/1.0/IEnnInterface.h",
+        "vendor/samsung_slsi/hardware/enn/1.0/IHwEnnInterface.h",
+        "vendor/samsung_slsi/hardware/enn/1.0/BnHwEnnInterface.h",
+        "vendor/samsung_slsi/hardware/enn/1.0/BpHwEnnInterface.h",
+        "vendor/samsung_slsi/hardware/enn/1.0/BsEnnInterface.h",
+        "vendor/samsung_slsi/hardware/enn/1.0/IEnnCallback.h",
+        "vendor/samsung_slsi/hardware/enn/1.0/IHwEnnCallback.h",
+        "vendor/samsung_slsi/hardware/enn/1.0/BnHwEnnCallback.h",
+        "vendor/samsung_slsi/hardware/enn/1.0/BpHwEnnCallback.h",
+        "vendor/samsung_slsi/hardware/enn/1.0/BsEnnCallback.h",
+
+    ],
+}
+
+cc_library_shared {
+    name: "vendor.samsung_slsi.hardware.enn@1.0",
+    defaults: ["hidl-module-defaults"],
+    generated_sources: ["vendor.samsung_slsi.hardware.enn@1.0_genc++"],
+    generated_headers: ["vendor.samsung_slsi.hardware.enn@1.0_genc++_headers"],
+    export_generated_headers: ["vendor.samsung_slsi.hardware.enn@1.0_genc++_headers"],
+    vendor: true,
+    shared_libs: [
+        "libhidlbase","liblog","libutils","libcutils",
+    ],
+    export_shared_lib_headers: [
+        "libhidlbase","libutils",
+    ],
+
+	compile_multilib: "both",
+}

@@ -1,0 +1,89 @@
+cc_library_headers {
+    name: "enn_test_headers",
+    host_supported: false,
+    vendor: true,
+    export_include_dirs: ["include"],
+}
+
+cc_defaults {
+    name: "enn_test_defaults",
+    cflags: [
+        "-fexceptions",
+        "-DANDROID_LOG",
+        "-DEXYNOS_NN_PROFILER",
+    ],
+    cppflags: [
+        "-std=c++14",
+        "-fexceptions",
+        "-DANDROID_LOG",
+        "-DEXYNOS_NN_PROFILER",
+    ],
+    shared_libs: [
+        "liblog",
+        "libcutils",
+        "libutils",
+        "libenn_common_utils",
+    ],
+    export_include_dirs: [
+        ".",
+    ],
+}
+
+cc_binary {
+    name: "EnnTest_v2_service",
+    defaults: [
+        "enn_test_defaults",
+    ],
+    header_libs: [
+        "enn_test_headers",
+    ],
+    srcs: ["src/main.cpp",
+           "src/cli_parser.cpp",
+           "src/enn_test_api.cpp",
+           "src/enn_test_reporter.cpp",
+           "src/enn_test.cpp",
+           "src/test_list.cpp",
+           "src/test_manager.cpp",
+    ],
+    vendor: true,
+    static_libs: [
+        "libgtest",
+        "libgtest_main",
+        "libenn_memory_manager",
+    ],
+    shared_libs: [
+        "libenn_user.samsung_slsi",
+        "libenn_profiler",
+    ],
+    compile_multilib: "64"
+}
+
+
+cc_binary {
+    name: "EnnTest_v2_lib",
+    defaults: [
+        "enn_test_defaults",
+    ],
+    header_libs: [
+        "enn_test_headers",
+    ],
+    srcs: ["src/main.cpp",
+           "src/cli_parser.cpp",
+           "src/enn_test_api.cpp",
+           "src/enn_test_reporter.cpp",
+           "src/enn_test.cpp",
+           "src/test_list.cpp",
+           "src/test_manager.cpp",
+    ],
+    vendor: true,
+    static_libs: [
+        "libgtest",
+        "libgtest_main",
+        "libenn_memory_manager",
+    ],
+    shared_libs: [
+        "libenn_user_lib",
+        "libenn_profiler",
+    ],
+    compile_multilib: "64"
+}

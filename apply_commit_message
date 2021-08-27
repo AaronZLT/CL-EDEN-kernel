@@ -1,0 +1,4 @@
+#!/bin/bash
+
+git config commit.template git-commit-template.txt
+echo "apply commit message on git"

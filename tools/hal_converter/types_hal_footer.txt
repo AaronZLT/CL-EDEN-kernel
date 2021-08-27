@@ -1,0 +1,11 @@
+using handle = handle_x86;  // generator: to make same interface with HIDL types
+
+}  // namespace hal
+}  // namespace enn
+
+
+#endif  // SRC_MEDIUM_TYPES_HAL_H_
+
+// Footer over
+
+
